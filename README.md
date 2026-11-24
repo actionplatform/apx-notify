@@ -65,6 +65,7 @@ Check the signature over the raw body before parsing it, and drop a repeated `X-
 ```python
 import hashlib, hmac
 
+
 def valid(secret: bytes, body: bytes, header: str) -> bool:
     expected = "sha256=" + hmac.new(secret, body, hashlib.sha256).hexdigest()
     return hmac.compare_digest(expected, header)
