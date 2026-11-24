@@ -1,0 +1,20 @@
+name: Code Quality
+
+on:
+  pull_request:
+  push:
+    branches: [master]
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    env:
+      AP_CHECK: "ruff check . && ruff format --check . && pytest -q"
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - run: pip install "action-platform @ git+https://github.com/actionplatform/action-platform@master" "pytest>=8" "ruff>=0.6"
+      - run: pip install --no-deps -e .
+      - uses: actionplatform/ci-github/check@v1
