@@ -1,0 +1,13 @@
+[project]
+name = "apx-notify"
+type = "library"
+language = "python"
+ci = "github"
+
+[source_host]
+kind = "github"
+repo = "actionplatform/apx-notify"
+
+[release]
+strategy = "semver"
+changelog = "conventional"
