@@ -57,6 +57,28 @@ class GuardTest(unittest.TestCase):
                 guard("webhook", "https://hooks.slack.com/x")
 
 
+class PinningTest(unittest.TestCase):
+    def test_the_connection_goes_to_the_address_that_was_checked(self):
+        connected = []
+
+        def refuse(address, timeout):
+            connected.append(address)
+            raise ConnectionRefusedError()
+
+        with (
+            mock.patch.dict(os.environ, {"APX_NOTIFY_ALLOW_PRIVATE": ""}),
+            mock.patch(
+                "socket.getaddrinfo",
+                return_value=[(2, 1, 6, "", ("52.1.2.3", 443))],
+            ),
+            mock.patch("socket.create_connection", side_effect=refuse),
+        ):
+            with self.assertRaises(Unavailable):
+                Https().post("slack", "https://hooks.slack.com/services/x", b"{}", {})
+
+        self.assertEqual(connected, [("52.1.2.3", 443)])
+
+
 class HttpsTest(unittest.TestCase):
     def setUp(self):
         self.server = HTTPServer(("127.0.0.1", 0), Receiver)
